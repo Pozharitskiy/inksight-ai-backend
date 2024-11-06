@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "zippy-card-382516",
+  "private_key_id": "85b57cc076b13a4108e91560822fda9a528b8a34",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCl634sCXq55A88\n0IkAsyae9vndcqmIKdEHu14BpbbTB/TXSAtUYNDcvFn7W1rCpT/X0OVsPOhptkEV\ntTXIzYwJiaNMHJ2A8fHED2RvmRZLMo/PexlQ/3hCLAHdOUXvXh57+d4ZVWGY29Sr\nc6BvcbH6Iro9aaW1ptehMWYuELqUsIUDOCIqvU0L7tUqDkqd8M9X0mu2QAxXQHhF\nMpOaimHvnRW9V9KzlUvxtMOnA4yBiVkdggjkgI0xkEDuoNVDuoCmJ2eUvFHWoK26\nt0x0g7Yt2TadKxy2EtVEldXnYJRqWR+2QDyvqOxF2Lm4lW5VKBX7Pt4myPjrExh8\nNBGcUN+RAgMBAAECggEAPS1eGdWq80TEW4uWoHPuDxoIml7vZJ3qjXvIFzpndVtP\nK1vMlaGXEXS/ht8x0WhF6IkFNsokden2CI+G09H6Sv/9fpBkgMl09/Im+cEMB9EO\nVpXQiV2RFXENhOjbwP1GpzbD7jpdoJOZ0FfzdXQKCC1q1z8PkzF/+1bwEpcnfLAb\nNy2w3Mtu4Ef8Pu3BIPpQORIrO0KwxEg0TpbqkGEOBOp7sSHiq869pXToAW5z9HnJ\nq7AXJfISh0heOZYgcDYZJyQi6f3aOZmmuhBFlFGzZ7zK1rXxjZ3RQ4qau6tzaEI8\nNb15qDo2fYEdNVjJdKNTZFdkLKwMAIQMZ3A1prZ7gwKBgQDaScWur6LTUq6u8iRm\nEwwmqADb//D1qPnhAgeNh8kuAxXFmlaXzSifRHgf85GMOjmi5wRECGWEYY+ix7fo\nRVsJv/qQa4mak5IoSlFUx7UnHUUg2KKYa46SdGM6aFNn5S0GghrZi1oFgGDu4kj1\nmwkbYPGp7DHISF8qDpqKU+VldwKBgQDClaErodUHl3T/WC2GSkPJPljKkBd66VET\n+k4as7mLXhjHYdZaTH/ICKRNe6Q+nV6dtYWVdiwuYWw7ang/RM6dB6Y4pAiIiZEW\n6LWuUMdWLOOTorgnydkSrOZSb9IQRjR6ishBi8KxMIvVgtKrJnVHGx3xm4S+b7Ek\nA1MDc4lFNwKBgQCczIk3ZepsKeRYvo7u05fS3LNhVIPdsrdrrW2HeJZGeujUvHyf\nJjubzC8NpIRUWi60mYUy6WUipoHqx9OPAOLYKhLuUpDRfFdsoZWydJHnutrBMVv6\naKhNA1WTywS+iJzDJAntYnATq5f1gI4v/mGYTRbKnGNWHsZdC4hu/Ly3GQKBgAbx\n1i27eeHqeud+GynWzrKJAhxApkXhu94Nqen0DiQ2OIYtLLxOTKU0AcEuL394mF7i\nkqDx9cO2AGnic+Y2K3WZR0pwOEm/NyltJsbQ5TxjH8AuJ4pr/s5W02WPzhx8lPTm\nrR0BwvIV/HejUqd/GOJvylLMLSGq1NSnNbhC0FxjAoGAYPMNNVwhaXCcBTQXZrc0\nElq8Pha1RCNRDHWl5eetFGT8EwiENOFihjp2OtTyBn82cW+9rc5DsgY103hVirrP\n7g1blApAHn1YL7atP9W2oTHr6ep6PgtLyWlmczZ8d7aiPzkQ+G6RjJyh/xq4jCMm\nj1CD5GcGuWQkDeskBcmmkNM=\n-----END PRIVATE KEY-----\n",
+  "client_email": "analysistattoo@zippy-card-382516.iam.gserviceaccount.com",
+  "client_id": "108554950624181210569",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/analysistattoo%40zippy-card-382516.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
