@@ -3,6 +3,7 @@ const axios = require("axios");
 const { OpenAI } = require("openai");
 const { assistant } = require("./gpt-4o-assistant");
 const { pollForMessages } = require("./pollForMessages");
+const { searchInterpretationNew } = require("./newSearch");
 
 require("dotenv").config();
 
@@ -59,7 +60,7 @@ function searchInterpretation(data, searchQuery) {
     }
   }
 
-  console.log("bestMatchInput", bestMatchInput, bestMatch?.length);
+  console.log("bestMatchInput", bestMatchInput, searchQuery);
 
   return bestMatch;
 }
@@ -72,43 +73,6 @@ const readSheetData = (filePath) => {
 
   return data;
 };
-
-async function getMatch(value) {
-  const filePath = "./helpers/InkSight AI eng.xlsx";
-  const data = readSheetData(filePath);
-
-  const arrayOfWords = data.map((row) => row["Tatoo (eng)"]);
-  console.log("arrayOfWords", arrayOfWords);
-
-  const completion = await openai.chat.completions.create({
-    messages: [
-      {
-        role: "system",
-        content:
-          "User sends an array of words and asks for the most similar word to the one he sent. always return only the item in the array that is most similar to the one the user sent.",
-      },
-      {
-        role: "user",
-        content: `what is the most similar word to ${value} in the array? Return in answer only founded item ${arrayOfWords?.toString()}`,
-      },
-    ],
-    model: "gpt-3.5-turbo",
-  });
-
-  const content = completion.choices[0]?.message?.content;
-
-  const indexOfEnd = content?.lastIndexOf('"');
-  const indexOfStart = content?.lastIndexOf('"', indexOfEnd - 1) + 1;
-
-  const result = content?.substring(indexOfStart, indexOfEnd);
-
-  console.log("\n---getMatch content", content + "\n");
-  console.log("\n---getMatch result", result + "\n");
-
-  let tattoDescription = searchInterpretation(data, result);
-
-  return tattoDescription;
-}
 
 const getImageMatch = async ({ version, base64Image, customUserPrompt }) => {
   try {
@@ -137,7 +101,7 @@ const getImageMatch = async ({ version, base64Image, customUserPrompt }) => {
     };
 
     const payload = {
-      model: "gpt-4-turbo",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -214,30 +178,29 @@ const myAssistant = async ({ tatto, image, threadId, version }) => {
   const filePath = "./helpers/InkSight AI eng.xlsx";
   const data = readSheetData(filePath);
 
-  // Try to search by modified crocodile search
-  let tattoDescription = searchInterpretation(data, tatto);
+  let tattooDescription = searchInterpretationNew(data, tatto);
 
   if (image) {
-    if (tattoDescription) {
-      tattoDescription = await getImageMatch({
+    if (tattooDescription) {
+      tattooDescription = await getImageMatch({
         version,
         base64Image: image,
-        customUserPrompt: `what does this tattoo can say about me? answer. here data for help ${tattoDescription}`,
+        customUserPrompt: `what does this tattoo can say about me? answer. here data for help ${tattooDescription}`,
       });
     } else {
-      tattoDescription = await getImageMatch({ version, base64Image: image });
+      tattooDescription = await getImageMatch({ version, base64Image: image });
     }
 
-    return tattoDescription;
+    return tattooDescription;
   }
 
-  if (!tattoDescription) {
-    tattoDescription = tatto;
+  if (!tattooDescription) {
+    tattooDescription = tatto;
   }
 
-  console.log("final result", tattoDescription);
+  console.log("final result", tattooDescription);
 
-  return await getResult(tattoDescription, threadId);
+  return await getResult(tattooDescription, threadId);
 };
 
 module.exports = { myAssistant };
