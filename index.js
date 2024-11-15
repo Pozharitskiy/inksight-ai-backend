@@ -12,6 +12,8 @@ const usersRouter = require("./routers/users");
 const generatesRouter = require("./routers/generations");
 const authRouter = require("./routers/auth");
 const analyticsRouter = require("./routers/analytics");
+const articlesRouter = require("./routers/articles");
+const articleCollectionsRouter = require("./routers/articleCollections");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -30,6 +32,8 @@ app.use("/users", usersRouter);
 app.use("/generations", generatesRouter);
 app.use("/auth", authRouter);
 app.use("/analytics", analyticsRouter);
+app.use("/articles", articlesRouter);
+app.use("/article-collections", articleCollectionsRouter);
 
 // Start the server
 const server = app.listen(port, () => {
