@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", authMiddleware, adminOnly, getAllAnalytics);
 
 // Get analytics by ID
-router.get("/:id", authMiddleware, adminOnly, getAnalyticsById);
+router.get("/:id", getAnalyticsById);
 
 // Edit analytics by ID (admin only)
 router.put("/:analyticsId", authMiddleware, adminOnly, editAnalytics);

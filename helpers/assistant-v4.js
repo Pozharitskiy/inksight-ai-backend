@@ -84,7 +84,7 @@ const getImageMatch = async ({ version, base64Image, customUserPrompt }) => {
 
     console.log("CURRENT VERSION", version);
 
-    if (version === "v2") {
+    if (version === "v2" || version === "v3") {
       systemPrompt = `You are an application that gives a psychological interpretation of a person's tattoos. (without text decoration). Please address the user as the person who wants to know why they choose that tattoo. on English. And extremelly important. you should answer only as json message because I send you response directly to app for parsing, example of json you answer {"analytic":"text minimum 700 characters minimum 3 newlines !important!","TopThreePersonality":[{"label":"Wisdom","emoji":"🦉"},{"label":"Calmless","emoji":"🪷"},{"label":"Realibity","emoji":"🛡️"}],"PrimaryColors":[{"name":"black","hex":"#000000","percentage":"50%"},{"name":"white","hex":"#ffffff","percentage":"50%"}],"primaryColorsAnalytics":"text"}`;
     }
 
@@ -204,4 +204,3 @@ const myAssistant = async ({ tatto, image, threadId, version }) => {
 };
 
 module.exports = { myAssistant };
-

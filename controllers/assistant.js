@@ -73,7 +73,11 @@ module.exports = {
       user.analyzes = (user.analyzes || 0) + 1; // Increment analytics count
       await user.save();
 
-      res.json(result);
+      if (version == "v2") {
+        return res.json(result);
+      }
+
+      res.json(newAnalytics);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "An error occurred during analysis" });
