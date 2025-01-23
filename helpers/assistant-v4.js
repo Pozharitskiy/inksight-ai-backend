@@ -4,6 +4,7 @@ const { OpenAI } = require("openai");
 const { assistant } = require("./gpt-4o-assistant");
 const { pollForMessages } = require("./pollForMessages");
 const { searchInterpretationNew } = require("./newSearch");
+const { getBase64 } = require("./base64");
 
 require("dotenv").config();
 
@@ -27,6 +28,33 @@ const crocodileSearch = (inputText, inputSearchQuery) => {
   }
 
   return counter;
+};
+
+const recognizeInterpretation = async (image) => {
+  const base64 = getBase64(image);
+
+  const chatCompletion = await openai.chat.completions.create({
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: "What’s tattoo in this image? answer withot description just what is it in one or two words",
+          },
+          {
+            type: "image_url",
+            image_url: {
+              url: `data:image/jpeg;base64,${base64}`,
+            },
+          },
+        ],
+      },
+    ],
+    model: "gpt-4o-mini",
+  });
+
+  return chatCompletion?.choices?.[0]?.message?.content;
 };
 
 function searchInterpretation(data, searchQuery) {
@@ -174,11 +202,12 @@ async function getResult(value, threadId) {
   }
 }
 
-const myAssistant = async ({ tatto, image, threadId, version }) => {
+const myAssistant = async ({ image, threadId, version }) => {
   const filePath = "./helpers/InkSight AI eng.xlsx";
   const data = readSheetData(filePath);
 
-  let tattooDescription = searchInterpretationNew(data, tatto);
+  const interpretation = await recognizeInterpretation(image);
+  let tattooDescription = searchInterpretationNew(data, interpretation);
 
   if (image) {
     if (tattooDescription) {
@@ -195,7 +224,7 @@ const myAssistant = async ({ tatto, image, threadId, version }) => {
   }
 
   if (!tattooDescription) {
-    tattooDescription = tatto;
+    tattooDescription = interpretation;
   }
 
   console.log("final result", tattooDescription);

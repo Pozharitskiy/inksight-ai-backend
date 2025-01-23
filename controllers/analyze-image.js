@@ -14,7 +14,10 @@ module.exports = {
           {
             role: "user",
             content: [
-              { type: "text", text: "What’s tattoo in this image? answer withot description just what is it in one or two words" },
+              {
+                type: "text",
+                text: `Provide a short, 1-5 word description of what the tattoo depicts (e.g., "Rose with skull")`,
+              },
               {
                 type: "image_url",
                 image_url: {
