@@ -14,6 +14,7 @@ const authRouter = require("./routers/auth");
 const analyticsRouter = require("./routers/analytics");
 const articlesRouter = require("./routers/articles");
 const articleCollectionsRouter = require("./routers/articleCollections");
+const dictionaryRouter = require("./routers/dictionary");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -34,6 +35,7 @@ app.use("/auth", authRouter);
 app.use("/analytics", analyticsRouter);
 app.use("/articles", articlesRouter);
 app.use("/article-collections", articleCollectionsRouter);
+app.use("/dictionary", dictionaryRouter);
 
 // Start the server
 const server = app.listen(port, () => {
