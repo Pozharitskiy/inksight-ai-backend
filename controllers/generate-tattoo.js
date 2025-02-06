@@ -1,8 +1,9 @@
 const {
-  generateTattoo,
+  generateTattooCustom,
   generateTattoSuggestion,
 } = require("../helpers/generateTattoo");
 
+const { OpenAI } = require("openai");
 const Generated = require("../models/Generations");
 const User = require("../models/User");
 const axios = require("axios");
@@ -63,13 +64,92 @@ const downloadImage = async (url, folder) => {
 
   return `/uploads/${filename}`; // Returning relative path for later use
 };
+
+const askUser = async (prompt, question) => {
+  // question: color, style, anything else
+
+  const openai = new OpenAI({
+    apiKey: process.env.GPT_API_KEY,
+  });
+
+  let data = {};
+
+  switch (question) {
+    case "color":
+      data = {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: "Ask user about color of this tattoo based on last answers to collect info",
+          },
+        ],
+      };
+      break;
+    case "style":
+      data = {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: "Ask user about style of this tattoo based on last answers to collect info",
+          },
+        ],
+      };
+      break;
+    case "anything else":
+      data = {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: "Ask user about anything else of this tattoo based on last answers to collect info",
+          },
+        ],
+      };
+      break;
+    default:
+      data = {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: "Ask user about tattoo based on last answers to collect info",
+          },
+        ],
+      };
+      break;
+  }
+
+  const chatCompletion = await openai.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content:
+          "you are program that will help to user to generate tattoo based on his story, you will be ask user about tattoo to collect more information based on last answers",
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+      data,
+    ],
+    model: "gpt-4o-mini",
+  });
+
+  return chatCompletion?.choices?.[0]?.message?.content;
+};
+
 module.exports = {
   OnGenerateTattoo: async (req, res) => {
-    const { prompt, count, deviceId } = req.body;
+    const { prompt, wishes, count, deviceId } = req.body;
 
     try {
       // Generate images (get external URLs)
-      const imageUrls = await generateTattoo(prompt, count);
+      const imageUrls = await generateTattooCustom(
+        prompt + wishes ? ` additional wishes: ${wishes}` : "",
+        count
+      );
 
       // If userId is provided, find or create user, otherwise assign 'unknown'
       let user = null;
@@ -130,6 +210,20 @@ module.exports = {
       console.error(error);
       res.status(500).json({
         error: "An error occurred while generating tattoo suggestion",
+      });
+    }
+  },
+
+  onChat: async (req, res) => {
+    const { prompt, question } = req.body;
+
+    try {
+      const result = await askUser(prompt, question);
+      res.json({ result });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        error: "An error occurred while asking user",
       });
     }
   },

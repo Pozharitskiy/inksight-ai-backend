@@ -2,7 +2,7 @@ const { default: axios } = require("axios");
 const { OpenAI } = require("openai");
 require("dotenv").config();
 
-const generateTattoo = async (prompt, count = 4) => {
+const generateTattooDalle = async (prompt, count = 4) => {
   try {
     const openai = new OpenAI({
       apiKey: process.env.GPT_API_KEY,
@@ -29,6 +29,51 @@ const generateTattoo = async (prompt, count = 4) => {
     console.error("Error generating tattoo images:", error);
     throw error;
   }
+};
+
+const generateTattooCustom = async (prompt) => {
+  try {
+    const taskResult = await axios.post(
+      "https://cl.imagineapi.dev/items/images/",
+      {
+        prompt: `a high-quality ${prompt} tattoo design PNG format, white solid background.`,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.IMAGINE_API_KEY}`,
+        },
+      }
+    );
+
+    console.log("taskResult", taskResult);
+
+    const taskId = taskResult.data?.data?.id;
+
+    let result = null;
+
+    while (!result?.upscaled_urls?.length) {
+      const response = await axios.get(
+        `https://cl.imagineapi.dev/items/images/${taskId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.IMAGINE_API_KEY}`,
+          },
+        }
+      );
+
+      if (response.data.data.status === "completed") {
+        result = response?.data?.data;
+      }
+
+      if (response.data.data.status === "failed") {
+        throw new Error("Task failed");
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+
+    return result.upscaled_urls;
+  } catch (error) {}
 };
 
 const generateTattoSuggestion = async () => {
@@ -72,4 +117,8 @@ const generateTattoSuggestion = async () => {
   }
 };
 
-module.exports = { generateTattoSuggestion, generateTattoo };
+module.exports = {
+  generateTattoSuggestion,
+  generateTattooCustom,
+  generateTattooDalle,
+};
