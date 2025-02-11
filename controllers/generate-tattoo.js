@@ -4,7 +4,8 @@ const {
 } = require("../helpers/generateTattoo");
 
 const { OpenAI } = require("openai");
-const Generated = require("../models/Generations");
+const Generations = require("../models/Generations");
+const Task = require("../models/Task");
 const User = require("../models/User");
 const axios = require("axios");
 const fs = require("fs");
@@ -142,16 +143,27 @@ const askUser = async (prompt, question) => {
 
 module.exports = {
   OnGenerateTattoo: async (req, res) => {
-    const { prompt, wishes, count, deviceId } = req.body;
+    const { prompt, wishes, deviceId } = req.body;
 
     try {
+      // Create a new Task entry in MongoDB
+      const task = new Task({
+        deviceId,
+        prompt,
+        wishes,
+        status: "pending",
+      });
+
+      // Save the task to track its status
+      await task.save();
+
       // Generate images (get external URLs)
       const imageUrls = await generateTattooCustom(
-        prompt + wishes ? ` additional wishes: ${wishes}` : "",
-        count
+        prompt + (wishes ? ` additional wishes: ${wishes}` : ""),
+        task._id // Pass the task ID for status tracking
       );
 
-      // If userId is provided, find or create user, otherwise assign 'unknown'
+      // Find or create the user based on deviceId
       let user = null;
       if (deviceId) {
         user = await User.findOne({ deviceId });
@@ -159,46 +171,39 @@ module.exports = {
           user = new User({ deviceId });
           await user.save();
         }
-      } else {
-        user = await User.findOne({ deviceId: "unknown" });
-        if (!user) {
-          user = new User({ deviceId: "unknown" });
-          await user.save();
-        }
       }
 
-      // Directory to store the downloaded images
+      // Create and save the generated tattoo data
       const uploadsFolder = path.resolve(__dirname, "../uploads");
       if (!fs.existsSync(uploadsFolder)) {
-        fs.mkdirSync(uploadsFolder, { recursive: true }); // Ensure uploads directory exists
+        fs.mkdirSync(uploadsFolder, { recursive: true });
       }
 
-      // Download the generated images and store them locally
       const localImagePaths = await Promise.all(
         imageUrls.map((url) => downloadImage(url, uploadsFolder))
       );
 
-      // Create a Generated object with local image paths
-      const generated = new Generated({
-        images: localImagePaths, // Save the local paths to the images
+      // Save the generated tattoo object
+      const generated = new Generations({
+        images: localImagePaths,
         prompt,
         userId: user._id,
       });
 
-      // Save the generated tattoo data
       await generated.save();
 
-      // Add the generation to the user's generations array
-      user.generations.push(generated._id);
-      await user.save();
+      // Update task with the result
+      await Task.findByIdAndUpdate(task._id, {
+        status: "completed",
+        images: localImagePaths,
+      });
 
-      // Send response back with the generated object (including local image paths)
+      // Send response back with the generated tattoo images
       res.json(generated);
+
     } catch (error) {
       console.error(error);
-      res.status(500).json({
-        error: "An error occurred while generating and saving tattoo images",
-      });
+      res.status(500).json({ error: "An error occurred during the generation process." });
     }
   },
 
