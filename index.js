@@ -18,6 +18,8 @@ const articlesRouter = require("./routers/articles");
 const articleCollectionsRouter = require("./routers/articleCollections");
 const dictionaryRouter = require("./routers/dictionary");
 
+const { getLastPendingTask } = require("./helpers/getLastPendingTask")
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -38,22 +40,18 @@ app.use("/analytics", analyticsRouter);
 app.use("/articles", articlesRouter);
 app.use("/article-collections", articleCollectionsRouter);
 app.use("/dictionary", dictionaryRouter);
-
-app.get("/task-status/:taskId", async (req, res) => {
-  const { taskId } = req.params;
+app.get('/tasks/lastPending', async (req, res) => {
+  const { deviceId } = req.query;
 
   try {
-    const task = await Task.findById(taskId);
-    if (!task) {
-      return res.status(404).json({ error: "Task not found" });
+    const task = await getLastPendingTask(deviceId);
+    if (task) {
+      return res.json(task);
+    } else {
+      return res.status(404).json({ error: 'No pending task found' });
     }
-
-    res.json({
-      status: task.status,
-      images: task.status === "completed" ? task.images : [],
-    });
   } catch (error) {
-    res.status(500).json({ error: "An error occurred" });
+    return res.status(500).json({ error: 'Error fetching task' });
   }
 });
 

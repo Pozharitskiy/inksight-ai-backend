@@ -141,69 +141,112 @@ const askUser = async (prompt, question) => {
   return chatCompletion?.choices?.[0]?.message?.content;
 };
 
+const processTask = async (taskId) => {
+  try {
+    // Получаем задачу из базы данных
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    // 4. Генерация изображений
+    const imageUrls = await generateTattooCustom(task.prompt, taskId);
+
+    // 5. Поиск или создание пользователя по deviceId
+    let user = null;
+    if (task.deviceId) {
+      user = await User.findOne({ deviceId: task.deviceId });
+      if (!user) {
+        user = new User({ deviceId: task.deviceId });
+        await user.save();
+      }
+    }
+
+    // 6. Сохранение изображений локально
+    const uploadsFolder = path.resolve(__dirname, "../uploads");
+    if (!fs.existsSync(uploadsFolder)) {
+      fs.mkdirSync(uploadsFolder, { recursive: true });
+    }
+
+    const localImagePaths = await Promise.all(
+      imageUrls.map((url) => downloadImage(url, uploadsFolder))
+    );
+
+    // 7. Сохранение данных о генерации татуировки в базе данных
+    const generated = new Generations({
+      images: localImagePaths,
+      prompt: task.prompt,
+      userId: user._id,
+    });
+
+    await generated.save();
+
+    // 8. Обновляем задачу с результатами (ссылки на изображения)
+    await Task.findByIdAndUpdate(taskId, {
+      status: "completed",
+      images: localImagePaths,
+    });
+
+    // (Не обязательно) — можно вернуть результат генерации пользователю
+    console.log("Tattoo generation completed successfully");
+
+  } catch (error) {
+    console.error("Error processing task:", error);
+    await Task.findByIdAndUpdate(taskId, { status: "failed" });
+  }
+};
+
+
 module.exports = {
   OnGenerateTattoo: async (req, res) => {
     const { prompt, wishes, deviceId } = req.body;
 
     try {
-      // Create a new Task entry in MongoDB
+      // 1. Создаем новую таску в БД
       const task = new Task({
         deviceId,
         prompt,
         wishes,
         status: "pending",
+        images: [],
+        retryCount: 0,
+        generationId: null,
       });
 
-      // Save the task to track its status
       await task.save();
 
-      // Generate images (get external URLs)
-      const imageUrls = await generateTattooCustom(
-        prompt + (wishes ? ` additional wishes: ${wishes}` : ""),
-        task._id // Pass the task ID for status tracking
-      );
+      console.log(`[${task._id}] Task created, returning taskId to client.`);
 
-      // Find or create the user based on deviceId
-      let user = null;
-      if (deviceId) {
-        user = await User.findOne({ deviceId });
-        if (!user) {
-          user = new User({ deviceId });
-          await user.save();
-        }
-      }
+      // 2. Запускаем процесс генерации **асинхронно** (не ждем завершения)
+      processTask(task._id);
 
-      // Create and save the generated tattoo data
-      const uploadsFolder = path.resolve(__dirname, "../uploads");
-      if (!fs.existsSync(uploadsFolder)) {
-        fs.mkdirSync(uploadsFolder, { recursive: true });
-      }
-
-      const localImagePaths = await Promise.all(
-        imageUrls.map((url) => downloadImage(url, uploadsFolder))
-      );
-
-      // Save the generated tattoo object
-      const generated = new Generations({
-        images: localImagePaths,
-        prompt,
-        userId: user._id,
-      });
-
-      await generated.save();
-
-      // Update task with the result
-      await Task.findByIdAndUpdate(task._id, {
-        status: "completed",
-        images: localImagePaths,
-      });
-
-      // Send response back with the generated tattoo images
-      res.json(generated);
+      // 3. Сразу возвращаем taskId клиенту
+      res.json({ taskId: task._id });
 
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "An error occurred during the generation process." });
+      console.error("Error creating task:", error);
+      res.status(500).json({ error: "Failed to create task" });
+    }
+  },
+  onGetTaskResult: async (req, res) => {
+    const { taskId } = req.params;
+
+    try {
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({ error: "Task not found" });
+      }
+
+      res.json({
+        taskId: task._id,
+        status: task.status,
+        images: task.images,
+      });
+
+    } catch (error) {
+      console.error("Error fetching task:", error);
+      res.status(500).json({ error: "Failed to fetch task result" });
     }
   },
 
