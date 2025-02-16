@@ -53,7 +53,7 @@ const generateTattooCustom = async (prompt, taskId) => {
     const taskIdResult = taskResult.data?.data?.id;
     let result = null;
     let attempts = 0;
-    const maxAttempts = 10;
+    const maxAttempts = 12;
 
     while (!result?.upscaled_urls?.length && attempts < maxAttempts) {
       attempts++;
