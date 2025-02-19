@@ -201,9 +201,8 @@ const processTask = async (taskId) => {
 module.exports = {
   OnGenerateTattoo: async (req, res) => {
     const { prompt, wishes, deviceId } = req.body;
-
+  
     try {
-      // 1. Создаем новую таску в БД
       const task = new Task({
         deviceId,
         prompt,
@@ -213,22 +212,24 @@ module.exports = {
         retryCount: 0,
         generationId: null,
       });
-
+  
       await task.save();
-
+  
       console.log(`[${task._id}] Task created, returning taskId to client.`);
-
-      // 2. Запускаем процесс генерации **асинхронно** (не ждем завершения)
-      processTask(task._id);
-
-      // 3. Сразу возвращаем taskId клиенту
+  
+      const taskId = await generateTattooCustom(task.prompt);
+  
+      await Task.findByIdAndUpdate(task._id, {
+        generationId: taskId,
+      });
+  
       res.json({ taskId: task._id });
-
+  
     } catch (error) {
       console.error("Error creating task:", error);
       res.status(500).json({ error: "Failed to create task" });
     }
-  },
+  },  
   onGetTaskResult: async (req, res) => {
     const { taskId } = req.params;
 

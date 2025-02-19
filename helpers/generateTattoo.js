@@ -33,8 +33,8 @@ const generateTattooDalle = async (prompt, count = 4) => {
   }
 };
 
-const generateTattooCustom = async (prompt, taskId) => {
-  console.log(`Processing task: ${taskId} with prompt: ${prompt}`);
+const generateTattooCustom = async (prompt) => {
+  console.log(`Processing prompt: ${prompt}`);
 
   try {
     // Отправляем запрос на генерацию
@@ -51,47 +51,18 @@ const generateTattooCustom = async (prompt, taskId) => {
     );
 
     const taskIdResult = taskResult.data?.data?.id;
-    let result = null;
-    let attempts = 0;
-    const maxAttempts = 12;
-
-    while (!result?.upscaled_urls?.length && attempts < maxAttempts) {
-      attempts++;
-
-      const response = await axios.get(
-        `https://cl.imagineapi.dev/items/images/${taskIdResult}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.IMAGINE_API_KEY}`,
-          },
-        }
-      );
-
-      if (response.data.data.status === "completed") {
-        result = response.data.data;
-      } else if (response.data.data.status === "failed") {
-        throw new Error("Task failed");
-      }
-
-      if (!result?.upscaled_urls?.length) {
-        console.log(`Retrying... (${attempts}/${maxAttempts})`);
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-      }
+    if (!taskIdResult) {
+      throw new Error("Failed to generate tattoo task");
     }
 
-    // Если картинки сгенерированы — возвращаем URL изображений
-    if (result && result.upscaled_urls?.length > 0) {
-      return result.upscaled_urls;
-    }
-
-    // Если не получилось — возвращаем null, задача будет обновлена в `processTask`
-    return null;
-
+    console.log(`Task created with ID: ${taskIdResult}`);
+    return taskIdResult; 
   } catch (error) {
-    console.error(`Error generating tattoo images for task ${taskId}:`, error);
-    return null; // Ошибка, задача будет обновлена в `processTask`
+    console.error(`Error generating tattoo images:`, error);
+    return null;
   }
 };
+
 
 const generateTattoSuggestion = async () => {
   try {
