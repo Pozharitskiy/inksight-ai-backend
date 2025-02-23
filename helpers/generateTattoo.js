@@ -37,7 +37,6 @@ const generateTattooCustom = async (prompt) => {
   console.log(`Processing prompt: ${prompt}`);
 
   try {
-    // Отправляем запрос на генерацию
     const taskResult = await axios.post(
       "https://cl.imagineapi.dev/items/images/",
       {
