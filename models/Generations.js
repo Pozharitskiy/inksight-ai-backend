@@ -5,11 +5,12 @@ const generatedSchema = new mongoose.Schema(
   {
     images: [{ type: String }],
     prompt: { type: String, required: true },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
+    userId: { type: String },
+    // userId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "User",
+    //   default: null,
+    // },
     status: {
       type: String,
       enum: ["pending", "in-progress", "completed", "failed"],
