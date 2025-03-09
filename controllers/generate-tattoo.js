@@ -200,12 +200,13 @@ const processTask = async (taskId) => {
 
 module.exports = {
   OnGenerateTattoo: async (req, res) => {
-    const { prompt, wishes, deviceId } = req.body;
+    const { prompt, style, wishes, deviceId } = req.body;
   
     try {
       const task = new Task({
         deviceId,
         prompt,
+        style,
         wishes,
         status: "pending",
         images: [],
@@ -217,7 +218,7 @@ module.exports = {
   
       console.log(`[${task._id}] Task created, returning taskId to client.`);
   
-      const taskId = await generateTattooCustom(task.prompt);
+      const taskId = await generateTattooCustom(task.prompt, task.style);
   
       await Task.findByIdAndUpdate(task._id, {
         generationId: taskId,

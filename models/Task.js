@@ -12,6 +12,7 @@ const taskSchema = new mongoose.Schema(
     },
     images: [{ type: String }],
     retryCount: { type: Number, default: 0 },
+    style: { type: String, required: true },
     // generationId: { type: mongoose.Schema.Types.ObjectId, ref: "Generated", default: null },
     generationId: { type: String, required: false },
     createdAt: { type: Date, default: Date.now },

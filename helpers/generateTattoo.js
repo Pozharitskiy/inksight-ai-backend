@@ -4,6 +4,8 @@ const Generations = require("../models/Generations");
 const Task = require("../models/Task");
 require("dotenv").config();
 
+const { allStylesDetails } = require("../constants/allStlyesDetails")
+
 const generateTattooDalle = async (prompt, count = 4) => {
   try {
     const openai = new OpenAI({
@@ -33,14 +35,14 @@ const generateTattooDalle = async (prompt, count = 4) => {
   }
 };
 
-const generateTattooCustom = async (prompt) => {
+const generateTattooCustom = async (prompt, style) => {
   console.log(`Processing prompt: ${prompt}`);
-
+  const styleDetailes = allStylesDetails[style.toLowerCase()] || '';
   try {
     const taskResult = await axios.post(
       "https://cl.imagineapi.dev/items/images/",
       {
-        prompt: `a high-quality tattoo design ${prompt} PNG format, white solid background.`,
+        prompt: `A high-quality tattoo design featuring ${prompt}, crafted in ${style} style. The composition showcases elements typical of ${style}, emphasizing ${styleDetailes}. Inspired by traditional and modern aesthetics, the artwork is bold, detailed, and designed specifically for tattoo application. PNG format, white solid background. --v 6 --style raw --q 2`
       },
       {
         headers: {
