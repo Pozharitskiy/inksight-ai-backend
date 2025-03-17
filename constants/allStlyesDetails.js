@@ -1,16 +1,28 @@
 const allStylesDetails = {
-    "traditional": "bold black outlines, limited color palette, classic motifs like anchors, roses, and swallows",
-    "new school": "exaggerated proportions, vibrant colors, cartoonish and graffiti-inspired aesthetics",
-    "realism": "highly detailed, smooth shading, lifelike textures and depth, often using black and gray or full color",
-    "japanese": "bold black outlines, rich shading, dynamic compositions, traditional motifs like koi fish, dragons, and cherry blossoms",
-    "bio Mechanical": "futuristic, mechanical elements blended with organic anatomy, high contrast and intricate detail",
-    "chicano": "black and gray shading, fine linework, religious and cultural motifs, smooth gradients and realism",
-    "ornamental": "intricate patterns, symmetry, dotwork, often inspired by mandalas and sacred geometry",
-    "blackWork": "solid black ink, strong contrast, geometric and abstract designs, minimal shading",
-    "watercolor": "soft edges, vibrant color splashes, minimal outlines, blending similar to watercolor paintings",
-    "minimalism": "clean lines, small-scale designs, negative space, simple yet elegant compositions",
-    "cybersigilism": "sharp angular shapes, neon-like digital aesthetics, occult and futuristic symbols",
-    "lettering": "typographic focus, calligraphic strokes, custom scripts, often incorporating flourishes and embellishments"
-}
+  traditional:
+    "[Description], in classic American Traditional tattoo style, bold black outlines, limited vintage color palette (red, green, yellow, black), clean simple shading, no extra elements, pure white background, PNG format,",
+  "new school":
+    "[Description], in a new school tattoo style, cartoonish exaggeration vibrant color palette with dynamic shading, bold linework with graffiti-inspired flair, slight 3D or airbrush effect, no watercolor, no paint splashes, no dripping paint, pure white background, PNG format,",
+  realism:
+    "[Description], in a realistic tattoo style, photorealistic shading and detailed textures, natural color palette (or black-and-gray realism), subtle gradients and soft transitions, clear depth and dimensionality, pure white background, PNG format,",
+  japanese:
+    "[Description], in a bold, traditional Japanese (irezumi) tattoo style, featuring dynamic composition with classic motifs (waves, wind bars, sakura, peonies), vibrant colors (red, pink, gold, green) with strong black shading, dramatic contrasts, large shapes, bold outlines, inspired by Japanese tattoo masters (e.g. Horiyoshi, Horitomo), pure white background, PNG format,",
+  biomechanical:
+    "[Description], in a biomechanical tattoo style, fusion of organic and mechanical elements, vibrant metallic hues and vivid bio-colors, intricate details with dramatic shading, glowing or bioluminescent accents, pure white background, PNG format,",
+  chicano:
+    "[Description], in a Chicano tattoo style, smooth black-and-gray shading, soft gradients with subtle highlights, bold but minimalist linework, limited ornamental details (no fractals, no swirling patterns), focus on elegant lettering or light filigree, pure white background, PNG format,",
+  ornamental:
+    "[Description], in an ornamental tattoo style, combining flowing filigree curves with geometric or straight-edged patterns, intricate and symmetrical design, mix of curved and angular linework, decorative detailing, pure white background, PNG format,",
+  blackwork:
+    "[Description], in a blackwork tattoo style, bold black shading and lines, high contrast, no color, geometric or graphic elements, solid fills and/or stipple shading, pure white background, PNG format,",
+  watercolor:
+    "[Description], in a modern watercolor tattoo style, soft and fluid brushstrokes, vibrant yet delicate color transitions, subtle paint splashes and gradients, light or minimal outlines, pure white background, PNG format,",
+  minimalism:
+    "Simple vector logo of [Description], with simple shapes and lines on a white background. Minimalist design, no details or shadows, in black on plain white paper. Vector graphic design in a simple, cute drawing style.",
+  cybersigilism:
+    "[Description], in a cybercigilism tattoo style, intricate, ultra-thin spiky lines with torn or frayed edges, abstract symmetrical design, alien/futuristic sigils, scratchy or glitch-like details, minimal shading, mostly black ink, pure white background, PNG format,",
+  lettering:
+    "[Text/Phrase], in a lettering tattoo style, intricate calligraphy or bold script, flowing lines, stylized flourishes, high contrast shading (if needed), pure white background, PNG format,",
+};
 
-module.exports = { allStylesDetails }
+module.exports = { allStylesDetails };

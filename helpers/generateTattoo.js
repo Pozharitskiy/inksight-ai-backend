@@ -4,7 +4,7 @@ const Generations = require("../models/Generations");
 const Task = require("../models/Task");
 require("dotenv").config();
 
-const { allStylesDetails } = require("../constants/allStlyesDetails")
+const { allStylesDetails } = require("../constants/allStlyesDetails");
 
 const generateTattooDalle = async (prompt, count = 4) => {
   try {
@@ -37,12 +37,16 @@ const generateTattooDalle = async (prompt, count = 4) => {
 
 const generateTattooCustom = async (prompt, style) => {
   console.log(`Processing prompt: ${prompt}`);
-  const styleDetailes = allStylesDetails[style.toLowerCase()] || '';
+  let template = allStylesDetails[style.toLowerCase()] || "";
+  template = template.replace("[Description]", prompt);
+
+  console.log("template", template);
+
   try {
     const taskResult = await axios.post(
       "https://cl.imagineapi.dev/items/images/",
       {
-        prompt: `A high-quality tattoo design featuring ${prompt}, crafted in ${style} style. The composition showcases elements typical of ${style}, emphasizing ${styleDetailes}. Inspired by traditional and modern aesthetics, the artwork is bold, detailed, and designed specifically for tattoo application. PNG format, white solid background. --v 6 --style raw --q 2`
+        prompt: `A high-quality tattoo design featuring ${template} The artwork is bold, detailed, and designed specifically for tattoo application. PNG format, white solid background. --v 6 --style raw --q 2`,
       },
       {
         headers: {
@@ -57,13 +61,12 @@ const generateTattooCustom = async (prompt, style) => {
     }
 
     console.log(`Task created with ID: ${taskIdResult}`);
-    return taskIdResult; 
+    return taskIdResult;
   } catch (error) {
     console.error(`Error generating tattoo images:`, error);
     return null;
   }
 };
-
 
 const generateTattoSuggestion = async () => {
   try {
